@@ -1,13 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spin_and_dine/model/restaurant.dart';
+import 'package:flutter_spin_and_dine/screens/restaurant_screen.dart';
 import 'package:provider/provider.dart';
 
 class AppScreen extends StatelessWidget {
-  const AppScreen({super.key});
+
+  AppScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     final TextEditingController textController = TextEditingController();
+
+    void handleSubmit(context) {
+      final input = textController.text;
+      if (input.trim().isEmpty) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.grey.shade600,
+            content: Text(
+              "Please enter atleast one restaurant",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+
+      final names = input
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toSet()
+          .toList();
+
+      final restaurantProvider = Provider.of<RestaurantList>(context, listen: false);
+      for (var name in names) {
+        restaurantProvider.addRestaurant(name);
+      }
+
+      textController.clear();
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (context, animation, secondaryAnimation) => RestaurantScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      );
+    }
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -32,6 +84,7 @@ class AppScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+
                     const Text(
                       "Enter your restaurant choices",
                       style: TextStyle(
@@ -40,9 +93,13 @@ class AppScreen extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
+
                     const SizedBox(height: 20),
+
                     TextField(
                       controller: textController,
+                      autofocus: true,
+                      textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
                         hintText: 'e.g. Domino\'s, Pizza Hut, Taco Bell...',
                         filled: true,
@@ -53,6 +110,7 @@ class AppScreen extends StatelessWidget {
                         ),
                       ),
                       textAlign: TextAlign.center,
+                      onSubmitted: (_ ) => handleSubmit(context),
                     ),
 
                     const SizedBox(height: 24),
@@ -60,16 +118,7 @@ class AppScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-
-                          final input = textController.text;
-                          final names = input.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-                          for (var name in names) {
-                            Provider.of<RestaurantList>(context, listen: false).addRestaurant(name);
-                          }
-                          textController.clear();
-                          Navigator.pushReplacementNamed(context, "/restaurant");
-                        },
+                        onPressed: () => handleSubmit(context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrangeAccent,
                           padding: const EdgeInsets.symmetric(vertical: 16),

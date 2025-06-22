@@ -26,11 +26,7 @@ class MyApp extends StatelessWidget {
             ),
           )
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const AppScreen(),
-          '/restaurant': (context) => const RestaurantScreen(),
-        },
+        home: AppScreen(),
       ),
     );
   }
