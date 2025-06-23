@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 class RestaurantList extends ChangeNotifier {
-
   List<String> _restaurants = [];
 
   List<String> get restaurants => _restaurants;
@@ -11,9 +10,8 @@ class RestaurantList extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeAt(String restaurant){
+  void removeAt(String restaurant) {
     _restaurants.remove(restaurant);
     notifyListeners();
   }
-
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spin_and_dine/screens/app_screen.dart';
-import 'package:flutter_spin_and_dine/screens/restaurant_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'model/restaurant.dart';
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
-          )
+          ),
         ),
         home: AppScreen(),
       ),

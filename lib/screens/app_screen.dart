@@ -4,12 +4,10 @@ import 'package:flutter_spin_and_dine/screens/restaurant_screen.dart';
 import 'package:provider/provider.dart';
 
 class AppScreen extends StatelessWidget {
-
   AppScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     final TextEditingController textController = TextEditingController();
 
     void handleSubmit(context) {
@@ -21,10 +19,7 @@ class AppScreen extends StatelessWidget {
             backgroundColor: Colors.grey.shade600,
             content: Text(
               "Please enter atleast one restaurant",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             duration: const Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -39,35 +34,51 @@ class AppScreen extends StatelessWidget {
           .where((e) => e.isNotEmpty)
           .toSet()
           .toList();
+      print(names);
 
-      final restaurantProvider = Provider.of<RestaurantList>(context, listen: false);
-      for (var name in names) {
-        restaurantProvider.addRestaurant(name);
+      final restaurantProvider = Provider.of<RestaurantList>(
+        context,
+        listen: false,
+      );
+
+      if (restaurantProvider.restaurants.isNotEmpty) {
+        final existingNames = restaurantProvider.restaurants
+            .map((e) => e.toLowerCase())
+            .toList();
+        print(existingNames);
+        final newNames = names
+            .where((e) => !existingNames.contains(e.toLowerCase()))
+            .toList();
+        print(newNames);
+
+        if (newNames.isNotEmpty) {
+          for (var name in newNames) {
+            restaurantProvider.addRestaurant(name);
+          }
+        }
+      } else {
+        for (var name in names) {
+          restaurantProvider.addRestaurant(name);
+        }
       }
 
       textController.clear();
+      FocusScope.of(context).unfocus();
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 500),
-          pageBuilder: (context, animation, secondaryAnimation) => RestaurantScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              RestaurantScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
+            return FadeTransition(opacity: animation, child: child);
           },
         ),
       );
     }
 
-
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Spin and Dine',
-        ),
-      ),
+      appBar: AppBar(title: const Text('Spin and Dine')),
 
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -84,7 +95,6 @@ class AppScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-
                     const Text(
                       "Enter your restaurant choices",
                       style: TextStyle(
@@ -98,7 +108,6 @@ class AppScreen extends StatelessWidget {
 
                     TextField(
                       controller: textController,
-                      autofocus: true,
                       textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
                         hintText: 'e.g. Domino\'s, Pizza Hut, Taco Bell...',
@@ -110,7 +119,7 @@ class AppScreen extends StatelessWidget {
                         ),
                       ),
                       textAlign: TextAlign.center,
-                      onSubmitted: (_ ) => handleSubmit(context),
+                      onSubmitted: (_) => handleSubmit(context),
                     ),
 
                     const SizedBox(height: 24),
