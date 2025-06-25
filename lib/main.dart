@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spin_and_dine/screens/app_screen.dart';
-import 'package:provider/provider.dart';
-
-import 'model/restaurant.dart';
+import 'package:flutter_spin_and_dine/features/home/ui/home.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,22 +8,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => RestaurantList(),
-      child: MaterialApp(
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            backgroundColor: Colors.orangeAccent,
-            centerTitle: true,
-            titleTextStyle: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+    return MaterialApp(
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.orangeAccent,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
-        home: AppScreen(),
       ),
+      home: AppScreen(),
     );
   }
 }

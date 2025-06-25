@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/app_screen.dart';
+import '../features/home/ui/home.dart';
 
 /// A button widget that navigates to the [AppScreen] when pressed.
 ///
