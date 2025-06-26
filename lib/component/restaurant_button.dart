@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/app_screen.dart';
+import '../screens/home_screen.dart';
 
 /// A button widget that navigates to the [AppScreen] when pressed.
 ///
@@ -31,7 +31,7 @@ class RestaurantButton extends StatelessWidget {
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 500),
             pageBuilder: (context, animation, secondaryAnimation) =>
-                AppScreen(),
+                HomeScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return FadeTransition(opacity: animation, child: child);

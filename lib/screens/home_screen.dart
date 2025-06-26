@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spin_and_dine/model/restaurant.dart';
+import 'package:flutter_spin_and_dine/bloc/sad_bloc.dart';
 import 'package:flutter_spin_and_dine/screens/restaurant_screen.dart';
-import 'package:provider/provider.dart';
 
-class AppScreen extends StatelessWidget {
-  AppScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController textController = TextEditingController();
@@ -36,31 +40,9 @@ class AppScreen extends StatelessWidget {
           .toList();
       print(names);
 
-      final restaurantProvider = Provider.of<RestaurantList>(
-        context,
-        listen: false,
+      context.of<SadBloc>().add(
+        ProceedButtonClickedEvent(restaurantNames: names),
       );
-
-      if (restaurantProvider.restaurants.isNotEmpty) {
-        final existingNames = restaurantProvider.restaurants
-            .map((e) => e.toLowerCase())
-            .toList();
-        print(existingNames);
-        final newNames = names
-            .where((e) => !existingNames.contains(e.toLowerCase()))
-            .toList();
-        print(newNames);
-
-        if (newNames.isNotEmpty) {
-          for (var name in newNames) {
-            restaurantProvider.addRestaurant(name);
-          }
-        }
-      } else {
-        for (var name in names) {
-          restaurantProvider.addRestaurant(name);
-        }
-      }
 
       textController.clear();
       FocusScope.of(context).unfocus();
