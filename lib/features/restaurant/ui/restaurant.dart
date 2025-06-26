@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spin_and_dine/component/restaurant_button.dart';
+import 'package:flutter_spin_and_dine/features/home/ui/home.dart';
 import 'package:flutter_spin_and_dine/features/restaurant/bloc/restaurant_bloc.dart';
+import 'package:flutter_spin_and_dine/features/restaurant/ui/bottom_sheet_widget.dart';
 import 'package:lottie/lottie.dart';
 
 class RestaurantScreen extends StatefulWidget {
@@ -18,19 +20,63 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   @override
   void initState() {
     super.initState();
-
     restaurantBloc.add(RestaurantInitialEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Center(child: Text("Restaurant Picker"))),
       body: BlocConsumer<RestaurantBloc, RestaurantState>(
         bloc: restaurantBloc,
+
         listenWhen: (previous, current) => current is RestaurantActionState,
+
         buildWhen: (previous, current) => current is! RestaurantActionState,
-        listener: (context, state) {},
+
+        listener: (context, state) {
+          if (state is RestaurantRemovedState) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "${state.removedName} removed",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.grey.shade600,
+                duration: Duration(seconds: 3),
+                action: SnackBarAction(
+                  label: "Undo",
+                  onPressed: () {
+                    restaurantBloc.add(
+                      AddRemovedRestaurantEvent(
+                        restaurantName: state.removedName,
+                      ),
+                    );
+                  },
+                  textColor: Colors.amber,
+                ),
+              ),
+            );
+          }
+
+          if (state is RestaurantNavigateToHomeState) {
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 500),
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    HomeScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+              ),
+            );
+          }
+        },
+
         builder: (context, state) {
           switch (state.runtimeType) {
             case RestaurantLoadedState:
@@ -41,9 +87,9 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Transform.scale(
-                            scale: 3.0,
+                            scale: 1.5,
                             child: Lottie.asset(
-                              "assets/empty.json",
+                              "assets/images/empty.json",
                               fit: BoxFit.fill,
                               repeat: true,
                               animate: true,
@@ -70,6 +116,11 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                               size: 24,
                               color: Colors.white,
                             ),
+                            onPressed: () {
+                              restaurantBloc.add(
+                                AddRestaurantButtonClickedEvent(),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -113,8 +164,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                       onPressed: () {
                                         final removedName = restaurantName;
                                         restaurantBloc.add(
-                                          RestaurantRemoveButtonClicked(
-                                            restaurantName: removedName,
+                                          RestaurantRemoveButtonClickedEvent(
+                                            removedRestaurantName: removedName,
                                           ),
                                         );
                                       },
@@ -127,6 +178,47 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                         ),
 
                         const SizedBox(height: 30),
+
+                        Column(
+                          children: [
+                            RestaurantButton(
+                              icon: null,
+                              onPressed: () {
+                                restaurantBloc.add(
+                                  AddRestaurantButtonClickedEvent(),
+                                );
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(90),
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20),
+                                      ),
+                                    ),
+                                    context: context,
+                                    builder: (context) {
+                                      return BottomSheetWidget();
+                                    },
+                                  );
+                                },
+                                child: Image.asset(
+                                  "assets/images/dice.png",
+                                  height: 90,
+                                  width: 90,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     );
 
@@ -138,141 +230,3 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     );
   }
 }
-
-// Column(
-//                           children: [
-//                             RestaurantButton(icon: null),
-
-//                             const SizedBox(height: 20),
-
-//                             Material(
-//                               color: Colors.transparent,
-//                               child: InkWell(
-//                                 borderRadius: BorderRadius.circular(90),
-//                                 onTap: () {
-//                                   showModalBottomSheet(
-//                                     isScrollControlled: true,
-//                                     shape: RoundedRectangleBorder(
-//                                       borderRadius: BorderRadius.vertical(
-//                                         top: Radius.circular(20),
-//                                       ),
-//                                     ),
-//                                     context: context,
-//                                     builder: (context) {
-//                                       String selectedRestaurant =
-//                                           restaurantsList
-//                                               .restaurants[Random().nextInt(
-//                                             restaurantsList.restaurants.length,
-//                                           )];
-
-//                                       return StatefulBuilder(
-//                                         builder: (context, setModalState) {
-//                                           return Container(
-//                                             height: 400,
-//                                             width: double.infinity,
-//                                             padding: const EdgeInsets.all(24),
-
-//                                             child: Column(
-//                                               mainAxisAlignment:
-//                                                   MainAxisAlignment.center,
-//                                               children: [
-//                                                 Text(
-//                                                   "🎉 Today's Pick!",
-//                                                   style: TextStyle(
-//                                                     fontSize: 36,
-//                                                     fontWeight: FontWeight.bold,
-//                                                   ),
-//                                                 ),
-
-//                                                 SizedBox(height: 16),
-
-//                                                 isLoading
-//                                                     ? Transform.scale(
-//                                                         scale: 1.5,
-//                                                         child: Lottie.asset(
-//                                                           "assets/loader.json",
-//                                                           height: 80,
-//                                                           width: 80,
-//                                                           fit: BoxFit.fill,
-//                                                           repeat: true,
-//                                                           animate: true,
-//                                                         ),
-//                                                       )
-//                                                     : Text(
-//                                                         selectedRestaurant,
-//                                                         style: TextStyle(
-//                                                           fontSize: 28,
-//                                                           color:
-//                                                               Colors.deepOrange,
-//                                                           fontWeight:
-//                                                               FontWeight.w700,
-//                                                         ),
-//                                                         textAlign:
-//                                                             TextAlign.center,
-//                                                       ),
-
-//                                                 SizedBox(height: 40),
-
-//                                                 ElevatedButton.icon(
-//                                                   onPressed: () {
-//                                                     final newSelectedRestaurant =
-//                                                         restaurantsList
-//                                                             .restaurants[Random()
-//                                                             .nextInt(
-//                                                               restaurantsList
-//                                                                   .restaurants
-//                                                                   .length,
-//                                                             )];
-
-//                                                     setModalState(() {
-//                                                       isLoading = true;
-//                                                     });
-
-//                                                     Future.delayed(
-//                                                       Duration(seconds: 3),
-//                                                       () {
-//                                                         setModalState(() {
-//                                                           selectedRestaurant =
-//                                                               newSelectedRestaurant;
-//                                                           isLoading = false;
-//                                                         });
-//                                                       },
-//                                                     );
-//                                                   },
-//                                                   icon: Icon(Icons.refresh),
-//                                                   label: Text(
-//                                                     "Spin Again",
-//                                                     style: TextStyle(
-//                                                       fontSize: 18,
-//                                                     ),
-//                                                   ),
-//                                                   style: ElevatedButton.styleFrom(
-//                                                     backgroundColor:
-//                                                         Colors.deepOrange,
-//                                                     foregroundColor:
-//                                                         Colors.white,
-//                                                     shape: RoundedRectangleBorder(
-//                                                       borderRadius:
-//                                                           BorderRadius.circular(
-//                                                             12,
-//                                                           ),
-//                                                     ),
-//                                                   ),
-//                                                 ),
-//                                               ],
-//                                             ),
-//                                           );
-//                                         },
-//                                       );
-//                                     },
-//                                   );
-//                                 },
-//                                 child: Image.asset(
-//                                   "assets/dice.png",
-//                                   height: 90,
-//                                   width: 90,
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),

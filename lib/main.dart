@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spin_and_dine/features/home/ui/home.dart';
+import 'package:flutter_spin_and_dine/splash_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: AppScreen(),
+      home: SplashScreen(),
     );
   }
 }

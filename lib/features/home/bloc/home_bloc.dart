@@ -15,9 +15,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homeInitialEvent(
     HomeInitialEvent event,
     Emitter<HomeState> emit,
-  ) async {
-    emit(HomeLoadingState());
-    await Future.delayed(Duration(seconds: 3));
+  ) {
     emit(HomeLoadedState());
   }
 

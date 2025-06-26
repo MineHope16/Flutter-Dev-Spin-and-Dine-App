@@ -16,4 +16,21 @@ final class RestaurantLoadedState extends RestaurantState {
 
 final class RestaurantErrorState extends RestaurantState {}
 
-final class RestaurantRemovedState extends RestaurantActionState {}
+final class RestaurantRemovedState extends RestaurantActionState {
+  final String removedName;
+  RestaurantRemovedState({required this.removedName});
+}
+
+final class RestaurantNavigateToHomeState extends RestaurantActionState {}
+
+final class ShowSelectedResatuarantState extends RestaurantState {
+  final String selectectRestaurant;
+
+  ShowSelectedResatuarantState({required this.selectectRestaurant});
+}
+
+final class ShowLoaderState extends RestaurantActionState {
+  final bool isLoading;
+
+  ShowLoaderState({required this.isLoading});
+}

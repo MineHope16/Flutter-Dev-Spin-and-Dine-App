@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spin_and_dine/features/home/bloc/home_bloc.dart';
+import 'package:flutter_spin_and_dine/features/restaurant/bloc/restaurant_bloc.dart';
 import 'package:flutter_spin_and_dine/features/restaurant/ui/restaurant.dart';
-import 'package:lottie/lottie.dart';
 
-class AppScreen extends StatefulWidget {
-  AppScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  HomeScreen({super.key});
 
   @override
-  State<AppScreen> createState() => _AppScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _AppScreenState extends State<AppScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   final HomeBloc homeBloc = HomeBloc();
 
   @override
@@ -63,11 +63,16 @@ class _AppScreenState extends State<AppScreen> {
 
       listener: (context, state) {
         if (state is HomeNavigateToRestaurant) {
+          FocusScope.of(context).unfocus();
+
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               transitionDuration: const Duration(milliseconds: 500),
               pageBuilder: (context, animation, secondaryAnimation) =>
-                  RestaurantScreen(),
+                  BlocProvider(
+                    create: (context) => RestaurantBloc(),
+                    child: RestaurantScreen(),
+                  ),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
                     return FadeTransition(opacity: animation, child: child);
@@ -79,39 +84,6 @@ class _AppScreenState extends State<AppScreen> {
 
       builder: (context, state) {
         switch (state.runtimeType) {
-          case HomeLoadingState:
-            debugPrint("HomeLoadingStateAccessed");
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Transform.scale(
-                      scale: 2.5,
-                      child: Lottie.asset(
-                        "assets/images/first.json",
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-
-                    SizedBox(height: 100),
-
-                    Text(
-                      'Spin and Dine',
-                      style: TextStyle(
-                        fontSize: 45,
-                        fontFamily: "Twilight",
-                        color: Colors.amber,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-
           case HomeLoadedState:
             debugPrint("HomeLoadedStateAccessed");
             final TextEditingController textController =

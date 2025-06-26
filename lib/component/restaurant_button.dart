@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../features/home/ui/home.dart';
 
-/// A button widget that navigates to the [AppScreen] when pressed.
+/// A button widget that navigates to the [HomeScreen] when pressed.
 ///
 /// The [RestaurantButton] displays an icon and a label "Add Restaurants".
 /// It uses a custom style with a deep orange background, padding,
@@ -14,31 +14,24 @@ import '../features/home/ui/home.dart';
 class RestaurantButton extends StatelessWidget {
   /// The icon to display on the button.
   final Icon? icon;
+  final VoidCallback onPressed;
 
   /// Creates a [RestaurantButton].
   ///
   /// The [icon] parameter must not be null.
-  RestaurantButton({required this.icon});
+  const RestaurantButton({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+  });
 
   /// Builds the button widget.
   ///
-  /// When pressed, it navigates to the [AppScreen] with a fade transition.
+  /// When pressed, it navigates to the [HomeScreen] with a fade transition.
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 500),
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                AppScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-          ),
-        );
-      },
+      onPressed: onPressed,
       icon: icon,
       label: const Text(
         "Add Restaurants",

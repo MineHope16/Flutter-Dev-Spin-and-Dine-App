@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_spin_and_dine/data/restaurant_list.dart';
 import 'package:meta/meta.dart';
@@ -9,7 +10,11 @@ part 'restaurant_state.dart';
 class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
   RestaurantBloc() : super(RestaurantInitial()) {
     on<RestaurantInitialEvent>(restaurantInitialEvent);
-    on<RestaurantRemoveButtonClicked>(restaurantRemoveButtonClicked);
+    on<RestaurantRemoveButtonClickedEvent>(restaurantRemoveButtonClicked);
+    on<AddRestaurantButtonClickedEvent>(addRestaurantButtonClickedEvent);
+    on<AddRemovedRestaurantEvent>(addRemovedRestaurantEvent);
+    on<DiceButtonClickedEvent>(diceButtonClickedEvent);
+    on<ShowLoaderEvent>(showLoaderEvent);
   }
 
   FutureOr<void> restaurantInitialEvent(
@@ -20,10 +25,43 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
   }
 
   FutureOr<void> restaurantRemoveButtonClicked(
-    RestaurantRemoveButtonClicked event,
+    RestaurantRemoveButtonClickedEvent event,
     Emitter<RestaurantState> emit,
   ) {
-    restaurants.remove(event.restaurantName);
+    restaurants.remove(event.removedRestaurantName);
     emit(RestaurantLoadedState(restaurants: restaurants));
+    emit(RestaurantRemovedState(removedName: event.removedRestaurantName));
+  }
+
+  FutureOr<void> addRestaurantButtonClickedEvent(
+    AddRestaurantButtonClickedEvent event,
+    Emitter<RestaurantState> emit,
+  ) {
+    emit(RestaurantNavigateToHomeState());
+  }
+
+  FutureOr<void> addRemovedRestaurantEvent(
+    AddRemovedRestaurantEvent event,
+    Emitter<RestaurantState> emit,
+  ) {
+    restaurants.add(event.restaurantName);
+  }
+
+  FutureOr<void> diceButtonClickedEvent(
+    DiceButtonClickedEvent event,
+    Emitter<RestaurantState> emit,
+  ) {
+    final String selectedRestaurants =
+        restaurants[Random().nextInt(restaurants.length)];
+    emit(
+      ShowSelectedResatuarantState(selectectRestaurant: selectedRestaurants),
+    );
+  }
+
+  FutureOr<void> showLoaderEvent(
+    ShowLoaderEvent event,
+    Emitter<RestaurantState> emit,
+  ) {
+    emit(ShowLoaderState(isLoading: event.isLoading));
   }
 }
