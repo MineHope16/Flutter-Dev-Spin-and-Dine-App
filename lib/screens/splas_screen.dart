@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spin_and_dine/features/home/ui/home.dart';
+import 'package:flutter_spin_and_dine/screens/home_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Transform.scale(
               scale: 2.5,
               child: Lottie.asset(
-                "assets/images/first.json",
+                "assets/images/logo_anim.json",
                 height: 100,
                 width: 100,
                 fit: BoxFit.fill,

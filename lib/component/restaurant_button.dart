@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../features/home/ui/home.dart';
+import '../screens/home_screen.dart';
 
 /// A button widget that navigates to the [HomeScreen] when pressed.
 ///
@@ -14,16 +14,11 @@ import '../features/home/ui/home.dart';
 class RestaurantButton extends StatelessWidget {
   /// The icon to display on the button.
   final Icon? icon;
-  final VoidCallback onPressed;
 
   /// Creates a [RestaurantButton].
   ///
   /// The [icon] parameter must not be null.
-  const RestaurantButton({
-    super.key,
-    required this.icon,
-    required this.onPressed,
-  });
+  const RestaurantButton({super.key, required this.icon});
 
   /// Builds the button widget.
   ///
@@ -31,7 +26,20 @@ class RestaurantButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
-      onPressed: onPressed,
+      onPressed: () {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 500),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                HomeScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          ),
+        );
+      },
       icon: icon,
       label: const Text(
         "Add Restaurants",
