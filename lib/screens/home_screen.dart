@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spin_and_dine/bloc/sad_bloc.dart';
 import 'package:flutter_spin_and_dine/screens/restaurant_screen.dart';
 
@@ -14,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final TextEditingController textController = TextEditingController();
 
-    void handleSubmit(context) {
+    void handleSubmit() {
       final input = textController.text;
       if (input.trim().isEmpty) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -38,9 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
           .where((e) => e.isNotEmpty)
           .toSet()
           .toList();
-      print(names);
 
-      context.of<SadBloc>().add(
+      context.read<SadBloc>().add(
         ProceedButtonClickedEvent(restaurantNames: names),
       );
 
@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       textAlign: TextAlign.center,
-                      onSubmitted: (_) => handleSubmit(context),
+                      onSubmitted: (_) => handleSubmit(),
                     ),
 
                     const SizedBox(height: 24),
@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () => handleSubmit(context),
+                        onPressed: () => handleSubmit(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrangeAccent,
                           padding: const EdgeInsets.symmetric(vertical: 16),

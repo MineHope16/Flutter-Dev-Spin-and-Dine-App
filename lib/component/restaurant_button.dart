@@ -27,6 +27,7 @@ class RestaurantButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
+        ScaffoldMessenger.of(context).clearSnackBars();
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 500),
